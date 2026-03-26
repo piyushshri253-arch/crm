@@ -2,8 +2,7 @@
   "name": "travel-crm-pro",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-      "build": "next build"
+    "dev": "next dev"
 
   },
   "dependencies": {
