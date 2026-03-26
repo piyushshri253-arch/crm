@@ -2,7 +2,9 @@
   "name": "travel-crm-pro",
   "private": true,
   "scripts": {
-    "dev": "next dev"
+    "dev": "next dev",
+      "build": "next build"
+
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.0.0",
