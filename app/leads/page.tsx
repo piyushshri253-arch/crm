@@ -18,6 +18,7 @@ export default function EmployeeLeadsPage() {
     const id = localStorage.getItem("user_id");
     const storedRole = localStorage.getItem("role");
 
+    // ❌ agar missing hai to login
     if (!id || !storedRole) {
       window.location.replace("/login");
       return;
