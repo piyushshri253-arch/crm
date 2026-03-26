@@ -13,14 +13,13 @@ export default function EmployeeLeadsPage() {
   const [notesMap, setNotesMap] = useState<any>({});
   const [editingLead, setEditingLead] = useState<any>(null);
 
-  // ================= AUTH =================
+  // ================= AUTH FIX (IMPORTANT) =================
   useEffect(() => {
     const id = localStorage.getItem("user_id");
     const storedRole = localStorage.getItem("role");
 
     if (!id || !storedRole) {
-      alert("Login required ❌");
-      window.location.href = "/login";
+      window.location.replace("/login");
       return;
     }
 
@@ -36,22 +35,18 @@ export default function EmployeeLeadsPage() {
     }
   }, [userId, role]);
 
-  // ================= USERS (FOR ASSIGN) =================
+  // ================= USERS =================
   const fetchUsers = async () => {
-    const { data } = await supabase
-      .from("users")
-      .select("id, name, role");
-
+    const { data } = await supabase.from("users").select("id, name, role");
     setUsers(data || []);
   };
 
-  // ================= LEADS FETCH =================
+  // ================= LEADS =================
   const fetchLeads = async (uid: string, userRole: string) => {
     setLoading(true);
 
     let query = supabase.from("leads").select("*");
 
-    // employee → only assigned
     if (userRole === "employee") {
       query = query.eq("assigned_to", uid);
     }
@@ -102,14 +97,15 @@ export default function EmployeeLeadsPage() {
       .eq("id", editingLead.id);
 
     setEditingLead(null);
+
     if (userId && role) fetchLeads(userId, role);
   };
 
-  // ================= ASSIGN (ADMIN ONLY) =================
+  // ================= ASSIGN =================
   const assignLead = async (leadId: string, assignUserId: string) => {
     if (!assignUserId) return;
 
-    const { error } = await supabase
+    await supabase
       .from("leads")
       .update({
         assigned_to: assignUserId,
@@ -117,16 +113,12 @@ export default function EmployeeLeadsPage() {
       })
       .eq("id", leadId);
 
-    if (error) {
-      console.error(error.message);
-      return;
-    }
-
     if (userId && role) fetchLeads(userId, role);
   };
 
   const canAssign = role === "super_admin" || role === "admin";
 
+  // ================= UI =================
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
 
@@ -211,7 +203,7 @@ export default function EmployeeLeadsPage() {
                     </button>
                   </td>
 
-                  {/* ASSIGNED TO */}
+                  {/* ASSIGNED */}
                   <td>
                     {canAssign ? (
                       <select
@@ -242,7 +234,7 @@ export default function EmployeeLeadsPage() {
                   <td className="space-x-2">
 
                     <a
-                      href={`https://wa.me/91${lead.phone}`}
+                      href={`https://wa.me/${lead.phone.replace(/\D/g, "")}`}
                       target="_blank"
                       className="bg-green-500 text-white px-2 py-1 rounded text-xs"
                     >
