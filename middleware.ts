@@ -6,12 +6,10 @@ export function middleware(req: NextRequest) {
 
   const isLoginPage = req.nextUrl.pathname === "/login";
 
-  // ❌ Not logged in → force login
   if (!userId && !isLoginPage) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  // ❌ logged in user should not go login page
   if (userId && isLoginPage) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
